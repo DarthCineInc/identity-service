@@ -1,11 +1,15 @@
 package com.darthcine.identityservice.config;
 
+import com.darthcine.identityservice.user.Role;
 import com.darthcine.identityservice.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,7 @@ import java.util.function.Function;
 @Service
 public class JwtService
 {
+
     private  static final String SECRET_KEY = "2736495c3b67652e7056324b57566e2a395e3d2e4f782c617b66216c4c";
     public String extractUsername(String token)
     {
@@ -44,7 +49,9 @@ public class JwtService
                 .builder()
                 .setClaims(extraClaims)
                 .setId(String.valueOf(userDetails.getId()))
+                .claim("name", userDetails.getName())
                 .setSubject(userDetails.getUsername())
+                .claim("role", userDetails.getRole())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
