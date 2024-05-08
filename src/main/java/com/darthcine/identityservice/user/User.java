@@ -1,7 +1,9 @@
 package com.darthcine.identityservice.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +24,17 @@ public class User implements UserDetails
     @GeneratedValue
     private Integer id;
 
+    @NotNull
+    @Size(min=5, max=100, message = "Invalid name size")
     private String name;
 
+    @Column(unique = true)
+    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @NotEmpty(message = "Email cannot be empty")
     private String email;
 
+    @NotNull
+    @Size(min=12, max=100)
     private String password;
 
     @Enumerated(EnumType.STRING)

@@ -5,13 +5,16 @@ import com.darthcine.identityservice.user.Role;
 import com.darthcine.identityservice.user.User;
 import com.darthcine.identityservice.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class AuthenticationService
 {
     private final UserRepository repository;
@@ -21,17 +24,22 @@ public class AuthenticationService
 
     public AuthenticationResponse register(RegisterRequest request)
     {
-        var user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.CLIENT)
-                .build();
-        repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        try {
+            var user = User.builder()
+                    .name(request.getName())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.CLIENT)
+                    .build();
+            repository.save(user);
+            var jwtToken = jwtService.generateToken(user);
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .build();
+        }
+        catch(DataIntegrityViolationException e) {
+            throw new RuntimeException("Register Violation");
+        }
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request)

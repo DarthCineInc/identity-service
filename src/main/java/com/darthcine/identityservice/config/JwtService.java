@@ -12,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.security.Key;
 import java.util.Date;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@Validated
 public class JwtService
 {
 
