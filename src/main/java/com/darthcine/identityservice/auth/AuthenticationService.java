@@ -42,7 +42,7 @@ public class AuthenticationService
         }
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request)
+    public AuthenticationResponse login(LoginRequest request)
     {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -56,5 +56,27 @@ public class AuthenticationService
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public Boolean TokenAuthentication(TokenAuthenticationRequest request)
+    {
+        try {
+            var jwtToken = request.getCurrentToken();
+            String username = jwtService.extractUsername(jwtToken);
+            var user = repository.findByEmail(username);
+            if (user != null)
+            {
+                Boolean valid = jwtService.isTokenExpired(jwtToken);
+                return valid;
+            }
+            else
+            {
+                return false;
+            }
+
+        } catch (Exception e)
+        {
+        }
+        return false;
     }
 }
