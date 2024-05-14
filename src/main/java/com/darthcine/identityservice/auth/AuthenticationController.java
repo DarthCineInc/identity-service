@@ -32,11 +32,12 @@ public class AuthenticationController
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<Boolean> authenticate(
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody TokenAuthenticationRequest request
     )
     {
-
-        return ResponseEntity.ok(service.TokenAuthentication(request));
+        if (service.TokenAuthentication(request))
+            return (ResponseEntity<AuthenticationResponse>) ResponseEntity.ok();
+        return (ResponseEntity<AuthenticationResponse>) ResponseEntity.badRequest();
     }
 }
