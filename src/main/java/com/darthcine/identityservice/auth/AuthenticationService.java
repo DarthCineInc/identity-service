@@ -67,7 +67,7 @@ public class AuthenticationService
             if (user != null)
             {
                 Boolean valid = jwtService.isTokenExpired(jwtToken);
-                return valid;
+                return !valid;
             }
             else
             {
